@@ -1,0 +1,123 @@
+/* src/pages/HomePage.css */
+
+/* General Reset */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+  
+  /* Navbar Styles */
+  .navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 20px;
+    background-color: #333;
+    color: white;
+  }
+  
+  .navbar-logo img {
+    width: 100px; /* Adjust logo size */
+  }
+  
+  .navbar-links a {
+    color: white;
+    text-decoration: none;
+    margin-left: 20px;
+    font-size: 16px;
+  }
+  
+  .navbar-links a:hover {
+    text-decoration: underline;
+  }
+  
+  /* Home Page Layout */
+  .home-page {
+    font-family: Arial, sans-serif;
+  }
+  
+  /* Flexbox for 2-Column Layout */
+  .content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 40px 20px;
+  }
+  
+  .image-container {
+    flex: 1;
+    margin-right: 20px;
+  }
+  
+  .image-container img {
+    width: 100%;
+    height: auto;
+    border-radius: 8px;
+  }
+  
+  .welcome-message {
+    flex: 1;
+  }
+  
+  .welcome-message h1 {
+    font-size: 36px;
+    margin-bottom: 20px;
+  }
+  
+  .welcome-message p {
+    font-size: 18px;
+    margin-bottom: 20px;
+  }
+  
+  .buttons {
+    display: flex;
+    gap: 15px;
+  }
+  
+  .buttons button {
+    padding: 10px 20px;
+    font-size: 16px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+  
+  .buttons button:hover {
+    background-color: #45a049;
+  }
+  
+  /* Media Queries for Responsiveness */
+  @media (max-width: 768px) {
+    .content {
+      flex-direction: column;
+      text-align: center;
+    }
+  
+    .image-container {
+      margin-right: 0;
+      margin-bottom: 20px;
+    }
+  
+    .navbar-links {
+      display: none; /* Hide links for mobile view */
+    }
+  
+    .navbar-logo img {
+      width: 80px; /* Adjust logo size for mobile */
+    }
+  }
+  
+  @media (max-width: 480px) {
+    .welcome-message h1 {
+      font-size: 28px;
+    }
+  
+    .buttons button {
+      padding: 8px 16px;
+      font-size: 14px;
+    }
+  }
+  

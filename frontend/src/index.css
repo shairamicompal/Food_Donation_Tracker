@@ -1,0 +1,61 @@
+/* src/index.css
+body {
+  font-family: 'Arial', sans-serif;
+  background-color: #f4f4f4;
+  margin: 0;
+  padding: 0;
+}
+
+.welcome-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  background-color: #f9f9f9;
+}
+
+.welcome-content {
+  text-align: center;
+  background-color: white;
+  padding: 40px;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.welcome-title {
+  font-size: 2.5em;
+  margin-bottom: 20px;
+  color: #2c3e50;
+}
+
+.welcome-description {
+  font-size: 1.2em;
+  margin-bottom: 30px;
+  color: #7f8c8d;
+}
+
+.welcome-actions {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+}
+
+.welcome-link {
+  font-size: 1.1em;
+  color: #3498db;
+  text-decoration: none;
+  padding: 8px 15px;
+  border-radius: 5px;
+  background-color: #ecf0f1;
+  transition: background-color 0.3s;
+}
+
+.welcome-link:hover {
+  background-color: #3498db;
+  color: white;
+}
+
+.divider {
+  font-size: 1.2em;
+  color: #7f8c8d;
+} */
