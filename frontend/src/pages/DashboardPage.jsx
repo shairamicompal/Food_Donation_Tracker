@@ -8,10 +8,6 @@ export default function DashboardPage() {
     localStorage.removeItem('token');
     window.location.href = '/login';
   };
-  
-  // Inside your return:
-  <button onClick={handleLogout}>Logout</button>
-  
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -38,6 +34,9 @@ export default function DashboardPage() {
       ) : (
         <p>Loading user information...</p>
       )}
+      
+      {/* Move button inside return statement */}
+      <button onClick={handleLogout}>Logout</button>
     </div>
   );
 }

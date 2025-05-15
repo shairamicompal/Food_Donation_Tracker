@@ -3,6 +3,11 @@ import ReactDOM from 'react-dom/client';
 import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
+import axios from 'axios';
+
+// Tell Axios that the API server is at port 8000
+axios.defaults.baseURL = 'http://localhost:8000';
+
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(

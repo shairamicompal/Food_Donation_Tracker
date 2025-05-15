@@ -1,3 +1,4 @@
+
 from rest_framework import generics, permissions
 from rest_framework.response import Response
 from rest_framework.authtoken.models import Token
@@ -5,32 +6,56 @@ from django.contrib.auth.models import User
 from tracker.serializers.user_serializer import RegisterSerializer, UserSerializer
 from rest_framework.views import APIView
 from rest_framework.authtoken.views import ObtainAuthToken
+from tracker.models import UserProfile
+
 
 class RegisterAPI(generics.GenericAPIView):
-    serializer_class = RegisterSerializer
+    serializer_class = RegisterSerializer  # ✅ Required to avoid AssertionError
 
     def post(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         user = serializer.save()
         token = Token.objects.create(user=user)
+        profile = UserProfile.objects.get(user=user)
+
         return Response({
+            "token": token.key,
             "user": UserSerializer(user).data,
-            "token": token.key
+            "role": profile.role,
+            "address": profile.address,
+            "birthday": profile.birthday
         })
+
+    def get(self, request, *args, **kwargs):  # ✅ Gracefully reject GET
+        return Response({"detail": "GET method not allowed."}, status=405)
+
 
 class LoginAPI(ObtainAuthToken):
     def post(self, request, *args, **kwargs):
         response = super().post(request, *args, **kwargs)
         token = response.data['token']
         user = Token.objects.get(key=token).user
+        profile = UserProfile.objects.get(user=user)
+
         return Response({
             "token": token,
-            "user": UserSerializer(user).data
+            "user": UserSerializer(user).data,
+            "role": profile.role,
+            "address": profile.address,
+            "birthday": profile.birthday
         })
+
 
 class UserAPI(APIView):
     permission_classes = [permissions.IsAuthenticated]
 
     def get(self, request):
-        return Response(UserSerializer(request.user).data)
+        profile = UserProfile.objects.get(user=request.user)
+
+        return Response({
+            "user": UserSerializer(request.user).data,
+            "role": profile.role,
+            "address": profile.address,
+            "birthday": profile.birthday
+        })

@@ -1,40 +1,72 @@
-// src/pages/HomePage.jsx
 import React from 'react';
 import { Link } from 'react-router-dom';
-import '../styles/Homepage.css'; // Don't forget to include the CSS file for styles
+import { Container, Navbar, Nav, Row, Col, Image } from 'react-bootstrap';
+import '../styles/Homepage.css';
+import logo from '../images/f.png';
+import foodImage from '../images/food-image.webp';
 
 const HomePage = () => {
   return (
     <div className="home-page">
       {/* Navbar */}
-      <nav className="navbar">
-        <div className="navbar-logo">
-          <img src="/path/to/logo.png" alt="Logo" />
-        </div>
-        <div className="navbar-links">
-          <Link to="/login">Login</Link>
-          <Link to="/register">Register</Link>
-        </div>
-      </nav>
+      <Navbar expand="lg" className="navbar">
+        <Container>
+          <Navbar.Brand href="/">
+            <img src={logo} alt="Logo" height="50" />
+          </Navbar.Brand>
+          <Navbar.Toggle aria-controls="basic-navbar-nav" />
+          <Navbar.Collapse id="basic-navbar-nav">
+            <Nav className="ms-auto">
+              <Nav.Link as={Link} to="/login" className="nav-custom-link me-3">Login</Nav.Link>
+              <Nav.Link as={Link} to="/register" className="nav-custom-link">Register</Nav.Link>
+            </Nav>
+          </Navbar.Collapse>
+        </Container>
+      </Navbar>
 
       {/* Main Content */}
-      <div className="content">
-        <div className="image-container">
-          <img src="/path/to/image.jpg" alt="Food Donation" />
-        </div>
-        <div className="welcome-message">
-          <h1>Welcome to the Food Donation & Waste Tracker</h1>
-          <p>Track your surplus food and donate to local organizations.</p>
-          <div className="buttons">
-            <Link to="/register">
-              <button>Register</button>
-            </Link>
-            <Link to="/login">
-              <button>Login</button>
-            </Link>
-          </div>
-        </div>
+      <div className="homepage-section">
+        <Container fluid className="content">
+          <Row className="align-items-center g-4">
+            {/* Image Section */}
+            <Col xs={12} md={5} className="d-flex justify-content-center align-items-center mt-4">
+              <Image src={foodImage} alt="Food Donation" fluid />
+            </Col>
+
+            {/* Text Section */}
+            <Col xs={12} md={7}>
+              <div className="welcome-message mt-4">
+                <h1 className="text-center">
+                  Welcome to the Food Donation<br />
+                  <strong className="sub-heading">& Waste Tracker</strong>
+                </h1>
+
+                <p className="text-center">Track your surplus food and donate to local organizations.</p>
+
+                <br />
+
+                <div className="features">
+                  <p>🚀 <strong>What You Can Do Here:</strong></p>
+                  <ul>
+                    <li>📝 Log extra food before it goes to waste</li>
+                    <li>🗑️ Track your waste and see how you’re improving</li>
+                    <li>📍 Find donation centers near you with just a click</li>
+                    <li>📊 Generate reports on your food waste reduction impact</li>
+                  </ul>
+                  <p>💚 <strong>Join Us in Making a Difference</strong></p>
+                  <p>Whether you're a restaurant, household, or volunteer—your contribution matters.</p>
+                  <p><strong>Start tracking. Start donating. Start changing lives.</strong></p>
+                </div>
+              </div>
+            </Col>
+          </Row>
+        </Container>
       </div>
+
+      {/* Footer */}
+      <footer className="footer text-center">
+        <p className="mb-0">© 2025 FeedoLog. All rights reserved.</p>
+      </footer>
     </div>
   );
 };
