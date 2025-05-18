@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Container, Table, Button, Spinner, Navbar, Nav, Row, Col, Modal } from 'react-bootstrap';
+import { Container, Table, Button, Spinner, Navbar, Nav, Row, Col, Modal, OverlayTrigger, Tooltip, Form } from 'react-bootstrap';
 import { Link, useNavigate } from 'react-router-dom';
 import API from '../services/api';
 import '../styles/Homepage.css';
@@ -12,11 +12,12 @@ export default function MyDonationsPage() {
     const [user, setUser] = useState(null);
     const [deletingDonationId, setDeletingDonationId] = useState(null);
     const [showDeleteModal, setShowDeleteModal] = useState(false);
+    const [showEditModal, setShowEditModal] = useState(false);
+    const [editingDonation, setEditingDonation] = useState(null);
 
     useEffect(() => {
         const storedUser = JSON.parse(localStorage.getItem('user'));
         setUser(storedUser);
-
         fetchDonations();
     }, []);
 
@@ -27,7 +28,6 @@ export default function MyDonationsPage() {
             const response = await API.get('donations/mine/', {
                 headers: { Authorization: `Token ${token}` },
             });
-            // Filter to exclude waste entries
             const filteredDonations = response.data.filter(item => item.donation_type !== 'waste');
             setDonations(filteredDonations);
         } catch (error) {
@@ -64,6 +64,31 @@ export default function MyDonationsPage() {
         }
     };
 
+    const openEditModal = (donation) => {
+        setEditingDonation({ ...donation });
+        setShowEditModal(true);
+    };
+
+    const handleEditChange = (e) => {
+        const { name, value } = e.target;
+        setEditingDonation(prev => ({ ...prev, [name]: value }));
+    };
+
+    const submitEdit = async () => {
+        try {
+            const token = localStorage.getItem('token');
+            const response = await API.put(`donations/${editingDonation.id}/update/`, editingDonation, {
+                headers: { Authorization: `Token ${token}` },
+            });
+            setDonations(prev =>
+                prev.map(d => (d.id === editingDonation.id ? response.data : d))
+            );
+            setShowEditModal(false);
+        } catch (error) {
+            console.error('Error updating donation:', error);
+        }
+    };
+
     if (!user || loading) {
         return (
             <div className="d-flex justify-content-center align-items-center vh-100">
@@ -74,7 +99,6 @@ export default function MyDonationsPage() {
 
     return (
         <div className="home-page d-flex flex-column min-vh-100">
-            {/* Navbar */}
             <Navbar expand="lg" className="navbar">
                 <Container>
                     <Navbar.Brand as={Link} to="/donor-dashboard">
@@ -94,7 +118,6 @@ export default function MyDonationsPage() {
                 </Container>
             </Navbar>
 
-            {/* Main Content */}
             <Container className="my-5 flex-grow-1">
                 <Row className="justify-content-center">
                     <Col xs={12}>
@@ -120,45 +143,70 @@ export default function MyDonationsPage() {
                                                 <th>Pickup Option</th>
                                                 <th>Organization</th>
                                                 <th>Created At</th>
+                                                <th>Status</th>
                                                 <th>Actions</th>
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            {donations.map((donation) => (
-                                                <tr key={donation.id}>
-                                                    <td>{donation.food_type}</td>
-                                                    <td>{donation.quantity}</td>
-                                                    <td>{donation.expiration_date}</td>
-                                                    <td>{donation.donation_type}</td>
-                                                    <td>{donation.pickup_option || 'N/A'}</td>
-                                                    <td>
-                                                        {donation.organization_details ? (
-                                                            <>
-                                                                <strong>{donation.organization_details.name || 'N/A'}</strong><br />
-                                                                <small>{donation.organization_details.address || 'No address provided'}</small>
-                                                            </>
-                                                        ) : 'N/A'}
-                                                    </td>
-                                                    <td>{new Date(donation.created_at).toLocaleString()}</td>
-                                                    <td>
-                                                        <Button
-                                                            variant="warning"
-                                                            size="sm"
-                                                            className="me-2"
-                                                            onClick={() => navigate(`/edit-donation/${donation.id}`)}
-                                                        >
-                                                            Edit
-                                                        </Button>
-                                                        <Button
-                                                            variant="danger"
-                                                            size="sm"
-                                                            onClick={() => confirmDelete(donation.id)}
-                                                        >
-                                                            Delete
-                                                        </Button>
-                                                    </td>
-                                                </tr>
-                                            ))}
+                                            {donations.map((donation) => {
+                                                const isEditable = donation.status === 'pending';
+                                                const isDeletable = donation.status !== 'accepted';
+
+                                                return (
+                                                    <tr key={donation.id}>
+                                                        <td>{donation.food_type}</td>
+                                                        <td>{donation.quantity}</td>
+                                                        <td>{donation.expiration_date}</td>
+                                                        <td>{donation.donation_type}</td>
+                                                        <td>{donation.pickup_option || 'N/A'}</td>
+                                                        <td>
+                                                            {donation.organization_details ? (
+                                                                <>
+                                                                    <strong>{donation.organization_details.name || 'N/A'}</strong><br />
+                                                                    <small>{donation.organization_details.address || 'No address provided'}</small>
+                                                                </>
+                                                            ) : 'N/A'}
+                                                        </td>
+                                                        <td>{new Date(donation.created_at).toLocaleString()}</td>
+                                                        <td>{donation.status ? donation.status.charAt(0).toUpperCase() + donation.status.slice(1) : 'N/A'}</td>
+                                                        <td style={{ minWidth: '130px', verticalAlign: 'middle' }}>
+                                                            <div style={{ display: 'flex', gap: '8px', justifyContent: 'center' }}>
+                                                                <OverlayTrigger
+                                                                    overlay={!isEditable ? <Tooltip>Cannot edit unless pending</Tooltip> : <></>}
+                                                                >
+                                                                    <span className="d-inline-block">
+                                                                        <Button
+                                                                            variant="warning"
+                                                                            size="sm"
+                                                                            style={{ minWidth: '60px' }}
+                                                                            onClick={() => openEditModal(donation)}
+                                                                            disabled={!isEditable}
+                                                                        >
+                                                                            Edit
+                                                                        </Button>
+                                                                    </span>
+                                                                </OverlayTrigger>
+
+                                                                <OverlayTrigger
+                                                                    overlay={!isDeletable ? <Tooltip>Cannot delete if accepted</Tooltip> : <></>}
+                                                                >
+                                                                    <span className="d-inline-block">
+                                                                        <Button
+                                                                            variant="danger"
+                                                                            size="sm"
+                                                                            style={{ minWidth: '60px' }}
+                                                                            onClick={() => confirmDelete(donation.id)}
+                                                                            disabled={!isDeletable}
+                                                                        >
+                                                                            Delete
+                                                                        </Button>
+                                                                    </span>
+                                                                </OverlayTrigger>
+                                                            </div>
+                                                        </td>
+                                                    </tr>
+                                                );
+                                            })}
                                         </tbody>
                                     </Table>
                                 </div>
@@ -186,7 +234,65 @@ export default function MyDonationsPage() {
                 </Modal.Footer>
             </Modal>
 
-            {/* Footer */}
+            {/* Edit Modal */}
+            {/* Edit Modal */}
+            <Modal show={showEditModal} onHide={() => setShowEditModal(false)} centered>
+                <Modal.Header closeButton>
+                    <Modal.Title>Edit Donation</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+                    {editingDonation && (
+                        <Form>
+                            <Form.Group className="mb-3">
+                                <Form.Label>Food Type</Form.Label>
+                                <Form.Control
+                                    type="text"
+                                    name="food_type"
+                                    value={editingDonation.food_type}
+                                    onChange={handleEditChange}
+                                />
+                            </Form.Group>
+                            <Form.Group className="mb-3">
+                                <Form.Label>Quantity</Form.Label>
+                                <Form.Control
+                                    type="text"
+                                    name="quantity"
+                                    value={editingDonation.quantity}
+                                    onChange={handleEditChange}
+                                />
+                            </Form.Group>
+                            <Form.Group className="mb-3">
+                                <Form.Label>Expiration Date</Form.Label>
+                                <Form.Control
+                                    type="date"
+                                    name="expiration_date"
+                                    value={editingDonation.expiration_date}
+                                    onChange={handleEditChange}
+                                />
+                            </Form.Group>
+                            <Form.Group className="mb-3">
+                                <Form.Label>Pickup Option</Form.Label>
+                                <Form.Select
+                                    name="pickup_option"
+                                    value={editingDonation.pickup_option || ''}
+                                    onChange={handleEditChange}
+                                    required
+                                >
+                                    <option value="">Select</option>
+                                    <option value="self_delivery">Self Delivery</option>
+                                    <option value="request_pickup">Request Pickup</option>
+                                </Form.Select>
+                            </Form.Group>
+                        </Form>
+                    )}
+                </Modal.Body>
+                <Modal.Footer>
+                    <Button variant="secondary" onClick={() => setShowEditModal(false)}>Cancel</Button>
+                    <Button variant="primary" onClick={submitEdit}>Save Changes</Button>
+                </Modal.Footer>
+            </Modal>
+
+
             <footer className="footer text-center py-3 mt-auto">
                 <p className="mb-0">© 2025 FeedoLog. All rights reserved.</p>
             </footer>

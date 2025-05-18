@@ -38,7 +38,8 @@ export default function OrganizationDashboardPage() {
           <Navbar.Collapse id="basic-navbar-nav">
             <Nav className="ms-auto">
               <Nav.Link as={Link} to="#" className="nav-custom-link me-3 active">Home</Nav.Link>
-              <Nav.Link as={Link} to="/organization-donations" className="nav-custom-link me-3">Incoming Donations</Nav.Link>
+              <Nav.Link as={Link} to="/received-donations" className="nav-custom-link me-3">Incoming Donations</Nav.Link>
+              <Nav.Link as={Link} to="/donation-history" className="nav-custom-link me-3">Donation History</Nav.Link>
               <Nav.Link as={Link} to="/organization-profile" className="nav-custom-link me-3">Profile</Nav.Link>
               <Nav.Link onClick={handleLogout} className="nav-custom-link text-danger">Logout</Nav.Link>
             </Nav>

@@ -46,14 +46,26 @@ const HomePage = () => {
                 <br />
 
                 <div className="features">
-                  <p>🚀 <strong>What You Can Do Here:</strong></p>
+                  <p>
+                    <span role="img" aria-label="rocket">🚀</span> <strong>What You Can Do Here:</strong>
+                  </p>
                   <ul>
-                    <li>📝 Log extra food before it goes to waste</li>
-                    <li>🗑️ Track your waste and see how you’re improving</li>
-                    <li>📍 Find donation centers near you with just a click</li>
-                    <li>📊 Generate reports on your food waste reduction impact</li>
+                    <li>
+                      <span role="img" aria-label="memo">📝</span> Log extra food before it goes to waste
+                    </li>
+                    <li>
+                      <span role="img" aria-label="trash bin">🗑️</span> Track your waste and see how you’re improving
+                    </li>
+                    <li>
+                      <span role="img" aria-label="location">📍</span> Find donation centers near you with just a click
+                    </li>
+                    <li>
+                      <span role="img" aria-label="chart">📊</span> Generate reports on your food waste reduction impact
+                    </li>
                   </ul>
-                  <p>💚 <strong>Join Us in Making a Difference</strong></p>
+                  <p>
+                    <span role="img" aria-label="green heart">💚</span> <strong>Join Us in Making a Difference</strong>
+                  </p>
                   <p>Whether you're a restaurant, household, or volunteer—your contribution matters.</p>
                   <p><strong>Start tracking. Start donating. Start changing lives.</strong></p>
                 </div>

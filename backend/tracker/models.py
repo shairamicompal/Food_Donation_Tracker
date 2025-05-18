@@ -68,6 +68,12 @@ class Donation(models.Model):
         ('self_delivery', 'Self-delivery'),
         ('request_pickup', 'Request pickup')
     ]
+    
+    STATUS_CHOICES = [
+        ('pending', 'Pending'),
+        ('accepted', 'Accepted'),
+        ('declined', 'Declined')
+    ]
 
     donor = models.ForeignKey(User, on_delete=models.CASCADE)  # Who is donating
     organization = models.ForeignKey(
@@ -89,7 +95,7 @@ class Donation(models.Model):
     notes = models.TextField(blank=True, null=True)
     donation_type = models.CharField(max_length=10, choices=DONATION_TYPE_CHOICES)
     created_at = models.DateTimeField(auto_now_add=True)
-    accepted = models.BooleanField(default=False)
+    status = models.CharField(max_length=10, choices=STATUS_CHOICES, default='pending')
 
     def __str__(self):
         return f"{self.food_type} ({self.quantity}) - {self.donation_type}"

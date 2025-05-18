@@ -14,6 +14,8 @@ import MyDonationsPage from './pages/MyDonationsPage';
 import MyWastePage from './pages/MyWastePage'; // ✅ Add this line
 import DonorProfilePage from './pages/DonorProfilePage';
 import OrganizationProfilePage from './pages/OrganizationProfilePage'; // ✅ Add this
+import ReceivedDonationsPage from './pages/ReceivedDonationsPage';
+import DonationHistoryPage from './pages/DonationHistoryPage'; 
 
 
 
@@ -32,7 +34,8 @@ export default function AppRouter() {
         <Route path="/mywaste" element={<MyWastePage />} /> {/* ✅ Add this route */}
         <Route path="/profile" element={<DonorProfilePage />} />
         <Route path="/organization-profile" element={<OrganizationProfilePage />} />
-
+        <Route path="/received-donations" element={<ReceivedDonationsPage />} />
+        <Route path="/donation-history" element={<DonationHistoryPage />} />
 
         {/* 🔒 Protected Route */}
         <Route
