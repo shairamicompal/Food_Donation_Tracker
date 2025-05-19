@@ -15,20 +15,6 @@ export default function LoginPage() {
   const [successMsg, setSuccessMsg] = useState('');
   const navigate = useNavigate();
 
-  useEffect(() => {
-    const token = localStorage.getItem('token');
-    const userData = localStorage.getItem('user');
-    if (token && userData) {
-      const { role } = JSON.parse(userData);
-      if (role === 'donor') {
-        navigate('/donor-dashboard');
-      } else if (role === 'organization') {
-        navigate('/organization-dashboard');
-      } else {
-        navigate('/dashboard');
-      }
-    }
-  }, [navigate]);
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
