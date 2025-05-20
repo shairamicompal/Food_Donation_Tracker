@@ -48,21 +48,28 @@ export default function MyDonationsPage() {
         setShowDeleteModal(true);
     };
 
-    const handleDelete = async () => {
-        try {
-            const token = localStorage.getItem('token');
-            await API.delete(`donations/${deletingDonationId}/delete/`, {
-                headers: { Authorization: `Token ${token}` },
-            });
-            setDonations(donations.filter(d => d.id !== deletingDonationId));
-            setShowDeleteModal(false);
-            setDeletingDonationId(null);
-        } catch (error) {
-            console.error('Error deleting donation:', error);
-            setShowDeleteModal(false);
-            setDeletingDonationId(null);
+  const handleDelete = async () => {
+    try {
+        const token = localStorage.getItem('token');
+        await API.delete(`donations/${deletingDonationId}/delete/`, {
+            headers: { Authorization: `Token ${token}` },
+        });
+        setDonations(donations.filter(d => d.id !== deletingDonationId));
+        setShowDeleteModal(false);
+        setDeletingDonationId(null);
+    } catch (error) {
+        console.error('Error deleting donation:', error);
+        // If backend returns a message, display it in an alert
+        if (error.response && error.response.data.detail) {
+            alert(error.response.data.detail);
+        } else {
+            alert('Failed to delete donation.');
         }
-    };
+        setShowDeleteModal(false);
+        setDeletingDonationId(null);
+    }
+};
+
 
     const openEditModal = (donation) => {
         setEditingDonation({ ...donation });
@@ -144,13 +151,14 @@ export default function MyDonationsPage() {
                                                 <th>Organization</th>
                                                 <th>Created At</th>
                                                 <th>Status</th>
+                                                <th>Notes</th>
                                                 <th>Actions</th>
                                             </tr>
                                         </thead>
                                         <tbody>
                                             {donations.map((donation) => {
                                                 const isEditable = donation.status === 'pending';
-                                                const isDeletable = donation.status !== 'accepted';
+                                                const isDeletable = donation.status === 'pending' || donation.status === 'declined';
 
                                                 return (
                                                     <tr key={donation.id}>
@@ -169,47 +177,72 @@ export default function MyDonationsPage() {
                                                         </td>
                                                         <td>{new Date(donation.created_at).toLocaleString()}</td>
                                                         <td>{donation.status ? donation.status.charAt(0).toUpperCase() + donation.status.slice(1) : 'N/A'}</td>
+                                                        <td>{donation.notes !== null && donation.notes !== '' ? donation.notes : '-'}</td>
                                                         <td style={{ minWidth: '130px', verticalAlign: 'middle' }}>
                                                             <div style={{ display: 'flex', gap: '8px', justifyContent: 'center' }}>
-                                                                <OverlayTrigger
-                                                                    overlay={!isEditable ? <Tooltip>Cannot edit unless pending</Tooltip> : <></>}
-                                                                >
+                                                                {/* Edit Button with Tooltip */}
+                                                                {!isEditable ? (
+                                                                    <OverlayTrigger overlay={<Tooltip>Cannot edit unless pending</Tooltip>}>
+                                                                        <span className="d-inline-block">
+                                                                            <Button
+                                                                                variant="warning"
+                                                                                size="sm"
+                                                                                style={{ minWidth: '60px' }}
+                                                                                disabled
+                                                                            >
+                                                                                Edit
+                                                                            </Button>
+                                                                        </span>
+                                                                    </OverlayTrigger>
+                                                                ) : (
                                                                     <span className="d-inline-block">
                                                                         <Button
                                                                             variant="warning"
                                                                             size="sm"
                                                                             style={{ minWidth: '60px' }}
                                                                             onClick={() => openEditModal(donation)}
-                                                                            disabled={!isEditable}
                                                                         >
                                                                             Edit
                                                                         </Button>
                                                                     </span>
-                                                                </OverlayTrigger>
+                                                                )}
 
-                                                                <OverlayTrigger
-                                                                    overlay={!isDeletable ? <Tooltip>Cannot delete if accepted</Tooltip> : <></>}
-                                                                >
+                                                                {/* Delete Button with Tooltip */}
+                                                                {!isDeletable ? (
+                                                                    <OverlayTrigger overlay={<Tooltip>Cannot delete unless pending or declined</Tooltip>}>
+                                                                        <span className="d-inline-block">
+                                                                            <Button
+                                                                                variant="danger"
+                                                                                size="sm"
+                                                                                style={{ minWidth: '60px' }}
+                                                                                disabled
+                                                                            >
+                                                                                Delete
+                                                                            </Button>
+                                                                        </span>
+                                                                    </OverlayTrigger>
+                                                                ) : (
                                                                     <span className="d-inline-block">
                                                                         <Button
                                                                             variant="danger"
                                                                             size="sm"
                                                                             style={{ minWidth: '60px' }}
                                                                             onClick={() => confirmDelete(donation.id)}
-                                                                            disabled={!isDeletable}
                                                                         >
                                                                             Delete
                                                                         </Button>
                                                                     </span>
-                                                                </OverlayTrigger>
+                                                                )}
                                                             </div>
                                                         </td>
                                                     </tr>
                                                 );
                                             })}
                                         </tbody>
+
                                     </Table>
                                 </div>
+
 
                                 <div className="text-center mt-4">
                                     <Button onClick={() => navigate('/donor-dashboard')} className="purple-btn rounded-pill">
@@ -283,6 +316,18 @@ export default function MyDonationsPage() {
                                     <option value="request_pickup">Request Pickup</option>
                                 </Form.Select>
                             </Form.Group>
+                            <Form.Group className="mb-3">
+                                <Form.Label>Notes</Form.Label>
+                                <Form.Control
+                                    as="textarea"
+                                    rows={3}
+                                    name="notes"
+                                    value={editingDonation?.notes || ''}
+                                    onChange={handleEditChange}
+                                    placeholder="Add any extra details (e.g. provide instructions/directions)"
+                                />
+                            </Form.Group>
+
                         </Form>
                     )}
                 </Modal.Body>

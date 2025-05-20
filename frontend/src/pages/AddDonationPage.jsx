@@ -18,6 +18,7 @@ export default function AddDonationPage() {
         pickup_option: '',
         donation_type: 'donate',
         organization: '',
+        notes: '',
     });
 
     useEffect(() => {
@@ -99,6 +100,7 @@ export default function AddDonationPage() {
                 pickup_option: '',
                 donation_type: 'donate',
                 organization: '',
+                notes: '', // <-- add this
             });
 
             navigate(formData.donation_type === 'donate' ? '/mydonations' : '/mywaste');
@@ -228,6 +230,19 @@ export default function AddDonationPage() {
                                             ))}
                                         </Form.Select>
                                     </Form.Group>
+
+                                    <Form.Group className="mb-3">
+                                        <Form.Label>Notes (Optional)</Form.Label>
+                                        <Form.Control
+                                            as="textarea"
+                                            rows={3}
+                                            name="notes"
+                                            value={formData.notes}
+                                            onChange={handleChange}
+                                            placeholder="Add any extra details (e.g. provide instructions/directions)"
+                                        />
+                                    </Form.Group>
+
                                 </>
                             )}
 
