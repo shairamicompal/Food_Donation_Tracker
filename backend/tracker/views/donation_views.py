@@ -98,3 +98,44 @@ def update_donation_status(request, pk):
 
     serializer = DonationSerializer(donation)
     return Response(serializer.data)
+
+
+# ✅ Filter to only count actual donations (exclude waste)
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def my_donation_count(request):
+    user = request.user
+    total = Donation.objects.filter(donor=user, donation_type='donate').count()
+    return Response({'total': total})
+
+# ✅ Count only waste donations
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def my_waste_count(request):
+    user = request.user
+    total_waste = Donation.objects.filter(donor=user, donation_type='waste').count()
+    return Response({'total_waste': total_waste})
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def organization_dashboard_stats(request):
+    # Check if user is an organization
+    if request.user.userprofile.role != 'organization':
+        return Response({'detail': 'Only organizations can access this endpoint.'},
+                        status=drf_status.HTTP_403_FORBIDDEN)
+
+    org_user = request.user
+
+    total = Donation.objects.filter(organization=org_user).count()
+    pending = Donation.objects.filter(organization=org_user, status='pending').count()
+    accepted = Donation.objects.filter(organization=org_user, status='accepted').count()
+    declined = Donation.objects.filter(organization=org_user, status='declined').count()
+
+    data = {
+        'total': total,
+        'pending': pending,
+        'accepted': accepted,
+        'declined': declined,
+    }
+
+    return Response(data)
