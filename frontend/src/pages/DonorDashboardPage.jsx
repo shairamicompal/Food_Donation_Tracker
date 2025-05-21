@@ -88,8 +88,7 @@ export default function DonorDashboardPage() {
             <h1>
               Welcome, <span className="highlighted-name">{fullName}</span>! 👋
             </h1>
-            <p className="lead"><p className="lead">Your generosity is changing lives. Check out the impact of your donations.</p>
-            </p>
+            <p className="lead">Your generosity is changing lives. Check out the impact of your donations.</p>
           </Col>
         </Row>
 

@@ -123,13 +123,15 @@ export default function ReceivedDonationsPage() {
                                                 <td>{donation.expiration_date ? new Date(donation.expiration_date).toLocaleDateString() : 'N/A'}</td>
                                                 <td>{donation.pickup_option || 'N/A'}</td>
                                                 <td>
-                                                    {donation.donor_details && (donation.donor_details.first_name || donation.donor_details.last_name) ? (
+                                                    {donation.donor_details ? (
                                                         <>
                                                             <strong>
                                                                 {donation.donor_details.first_name || ''} {donation.donor_details.last_name || ''}
                                                             </strong>
                                                             <br />
                                                             <small>{donation.donor_details.address || 'No address provided'}</small>
+                                                            <br />
+                                                            <small className="text-muted">{donation.donor_details.email || 'No email provided'}</small>
                                                         </>
                                                     ) : (
                                                         'N/A'

@@ -19,7 +19,7 @@ class DonorDetailsSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ['first_name', 'last_name', 'address']
+        fields = ['first_name', 'last_name', 'email', 'address']
 
     def get_address(self, obj):
         try:

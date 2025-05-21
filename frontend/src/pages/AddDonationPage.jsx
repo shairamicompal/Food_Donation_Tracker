@@ -60,6 +60,19 @@ export default function AddDonationPage() {
         e.preventDefault();
         setIsSubmitting(true);
 
+        // Frontend validation for 'donate' fields
+        if (formData.donation_type === 'donate') {
+            if (
+                !formData.expiration_date ||
+                !formData.pickup_option ||
+                !formData.organization
+            ) {
+                alert('Please complete all required fields for a donation.');
+                setIsSubmitting(false);
+                return;
+            }
+        }
+
         try {
             const token = localStorage.getItem('token');
             if (!token) {
@@ -68,18 +81,15 @@ export default function AddDonationPage() {
                 return;
             }
 
-            // Clean formData before sending:
             const submissionData = { ...formData };
 
             if (submissionData.donation_type === 'waste') {
-                // Set donation_type 'waste' fields to null (not empty string)
                 submissionData.organization = null;
                 submissionData.expiration_date = null;
                 submissionData.pickup_option = null;
             }
 
-            // Convert any other empty strings to null for safe backend handling
-            Object.keys(submissionData).forEach(key => {
+            Object.keys(submissionData).forEach((key) => {
                 if (submissionData[key] === '') {
                     submissionData[key] = null;
                 }
@@ -100,7 +110,7 @@ export default function AddDonationPage() {
                 pickup_option: '',
                 donation_type: 'donate',
                 organization: '',
-                notes: '', // <-- add this
+                notes: '',
             });
 
             navigate(formData.donation_type === 'donate' ? '/mydonations' : '/mywaste');
@@ -111,6 +121,7 @@ export default function AddDonationPage() {
             setIsSubmitting(false);
         }
     };
+
 
     const handleLogout = () => {
         localStorage.removeItem('token');
